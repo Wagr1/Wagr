@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import App from './App'
 import { Switch, Route, Link } from 'react-router-dom'
+import db from './store/firestore'
 // const firebase = require("firebase");
 // require("firebase/firestore");
 
@@ -21,6 +22,22 @@ import { Switch, Route, Link } from 'react-router-dom'
 
 
 class InitialGameView extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      messages: []
+    }
+  }
+  
+componentDidMount() {
+  let messages = db.collection('game').doc('gameRoom1')
+                .collection('messages')
+  messages.get()
+    .then((doc) => {
+      console.log(doc.data)
+    })
+  console.log(messages.data)  
+}
 
   render() {
       return (
