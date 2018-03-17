@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Routes from './routes'
+import Routes from './components/routes'
 import { Provider } from 'react-redux'
 import { Router } from 'react-router-dom'
 import registerServiceWorker from './registerServiceWorker';
