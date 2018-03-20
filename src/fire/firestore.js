@@ -17,6 +17,7 @@ firebase.initializeApp(config);
 export const db = firebase.firestore();
 export const auth = firebase.auth();
 
+auth.onAuthStateChanged(() => auth.signInAnonymously())
 export const userById = id => db.collection('users').doc(id);
 
 export const gameById = id => db.collection('game').doc(id);
