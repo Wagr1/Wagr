@@ -54,24 +54,24 @@ class SignUp extends Component {
       console.log(error.message)
     });
     // console.log(auth.currentUser.email)
-    
+
   }
 
   render() {
     const { name, newUsernameEntry, newPasswordEntry, handleChangeUsername, handleChangePassword } = this.props;
-    
+
     return (
       <div>
         <Segment inverted>
           <Header inverted as="h2" icon textAlign="center">
             <Icon name="ethereum" circular />
             <Header.Content>
-              <h2 class="ui red header">
+              <h2 className="ui red header">
                 Welcome 2 Wagr
             </h2>
             </Header.Content>
             <Header.Content>
-              <h2 class="ui red header">
+              <h2 className="ui red header">
                 Complete the form below to sign up!
               </h2>
             </Header.Content>
@@ -79,7 +79,7 @@ class SignUp extends Component {
         </Segment>
         <Grid>
         <Grid.Row centered>
-        <Form onSignUp={evt => this.signUp(evt)} 
+        <Form onSignUp={evt => this.signUp(evt)}
               onLogin={evt => this.login(evt)}>
           <label>User Name</label>
           <input placeholder='User Name' onChange={handleChangeUsername} value={newUsernameEntry} />

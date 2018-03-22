@@ -2,21 +2,25 @@ import React, { Component } from "react";
 import logo from "../logo.svg";
 import "./app.css";
 import { Switch, Route, Link, withRouter } from "react-router-dom";
-import { db, auth, userById, email } from "../fire/firestore";
+import { db, auth, userById } from "../fire/firestore";
 import history from "../history";
 import store from "../store";
 import { browserHistory } from "react-router";
 import web3 from "../web3";
 import mafiaContract from "../mafiaContract";
-import GeneralChat from "./generalChat/index";
 import { definedRole, randomNameGenerator } from "../utils";
 import SingleWagerView from "./singleWagerView";
 import basketball from "./basketball.png";
-import { Header, Icon, Image, Segment, Grid, Button, Card } from 'semantic-ui-react'
+import {
+  Header,
+  Icon,
+  Image,
+  Segment,
+  Grid,
+  Button,
+  Card
+} from "semantic-ui-react";
 
-
-
- 
 class AllWagers extends Component {
   constructor(props) {
     super(props);
@@ -29,17 +33,17 @@ class AllWagers extends Component {
 
     this.enterGame = this.enterGame.bind(this);
     this.signUp = this.signUp.bind(this);
-    this.logout = this.logout.bind(this)
+    this.logout = this.logout.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     var email;
     auth.onAuthStateChanged(function(user) {
       if (user) {
-        email = user.email
+        email = user.email;
       }
-    })
-   
+    });
+
     db.collection("wagers").onSnapshot(snapshot => {
       this.setState({
         listOfWagers: snapshot.docs.map(doc => {
@@ -54,29 +58,27 @@ class AllWagers extends Component {
   }
 
   componentWillUnmount() {
-    var unsubscribe = auth.onAuthStateChanged(function (user) {
+    var unsubscribe = auth.onAuthStateChanged(function(user) {
       if (user) {
-         // User is signed in.
+        // User is signed in.
       }
-  });
-  
-  unsubscribe()
-  }
+    });
 
+    unsubscribe();
+  }
 
   enterGame = event => {
     event.preventDefault();
 
     if (!this.state.currentUser) {
-      alert("Please sign in to see wager detail")
+      alert("Please sign in to see wager detail");
     } else {
-      
       let wager = event.target.value;
-      
+
       var data = {
         wager: wager
       };
-  
+
       var setDoc = db
         .collection("wagers")
         .doc(wager)
@@ -88,24 +90,20 @@ class AllWagers extends Component {
     }
 
     // userById(auth.currentUser.uid).set({ id: auth.currentUser.uid });
-
-    
   };
 
   signUp = event => {
     event.preventDefault();
-    this.props.history.push('/game/signup');
-  }
+    this.props.history.push("/game/signup");
+  };
 
   logout = () => {
-    auth.signOut()
-    .then(() => {
+    auth.signOut().then(() => {
       this.setState({
         currentUser: ""
-      })
-    })
-   
-  }
+      });
+    });
+  };
 
   render() {
     // console.log("list: ", this.state.listOfWagers);
@@ -114,62 +112,60 @@ class AllWagers extends Component {
     var user = auth.currentUser;
 
     if (user) {
-      console.log("user: ", user)
+      console.log("user: ", user);
     } else {
-      console.log("else: ", user)
+      console.log("else: ", user);
     }
 
-    console.log("state: ", this.state.currentUser)
+    console.log("state: ", this.state.currentUser);
     const wagerList = this.state.listOfWagers;
-    console.log("wagerlist: ", wagerList)
-    if (this.state.currentUser) {
-      return (
-        <div>
+    console.log("wagerlist: ", wagerList);
+
+    return this.state.currentUser ? (
+      <div>
         <Segment inverted>
           <Header inverted as="h2" icon textAlign="center">
             <Icon name="ethereum" circular />
             <Header.Content>
               <h2 className="ui red header">
-                Welcome 2 Wagr
-            </h2>
-            </Header.Content>
-            <Header.Content>
-              <h2 className="ui red header">
-                See a wager that you like? Sign in to see more!
+                Welcome {this.state.currentUser} !
               </h2>
             </Header.Content>
             <Header.Content>
-              <Button onClick={this.logout}>
-                Logout
-              </Button>
+              <h2 className="ui red header">
+                See a wager that you like? Cick to see more
+              </h2>
+            </Header.Content>
+            <Header.Content>
+              <Button onClick={this.logout}>Logout</Button>
             </Header.Content>
           </Header>
         </Segment>
         <Grid columns={5}>
           {wagerList.map(wager => (
-            <Grid.Column>
+            <Grid.Column key={wager.id}>
               <Card key={wager.id} className="ui segment centered">
                 <Image src={basketball} />
                 <Card.Header />
-                <Button key={wager.id} value={wager.id} onClick={this.enterGame}>
+                <Button
+                  key={wager.id}
+                  value={wager.id}
+                  onClick={this.enterGame}
+                >
                   Click here to bet on {wager.id.split("vs").join(" vs. ")}
                 </Button>
               </Card>
             </Grid.Column>
           ))}
         </Grid>
-        </div>
-      )
-    } else {
-      return (
-        <div>
+      </div>
+    ) : (
+      <div>
         <Segment inverted>
           <Header inverted as="h2" icon textAlign="center">
             <Icon name="ethereum" circular />
             <Header.Content>
-              <h2 className="ui red header">
-                Welcome 2 Wagr
-            </h2>
+              <h2 className="ui red header">Welcome 2 Wagr</h2>
             </Header.Content>
             <Header.Content>
               <h2 className="ui red header">
@@ -177,9 +173,7 @@ class AllWagers extends Component {
               </h2>
             </Header.Content>
             <Header.Content>
-              <Button onClick={this.signUp}>
-                Sign up/Sign in
-              </Button>
+              <Button onClick={this.signUp}>Sign up/Sign in</Button>
             </Header.Content>
           </Header>
         </Segment>
@@ -189,17 +183,20 @@ class AllWagers extends Component {
               <Card key={wager.id} className="ui segment centered">
                 <Image src={basketball} />
                 <Card.Header />
-                <Button key={wager.id} value={wager.id} onClick={this.enterGame}>
+                <Button
+                  key={wager.id}
+                  value={wager.id}
+                  onClick={this.enterGame}
+                >
                   Click here to bet on {wager.id.split("vs").join(" vs. ")}
                 </Button>
               </Card>
             </Grid.Column>
           ))}
         </Grid>
-        </div>
-        )
-      }
-    }
+      </div>
+    );
   }
+}
 
 export default withRouter(AllWagers);
