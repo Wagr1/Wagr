@@ -5,25 +5,10 @@ import { Switch, Route, Link, withRouter } from "react-router-dom";
 import { db, auth, userName } from "../fire/firestore";
 import { connect } from "react-redux";
 import { postMssage, writeMessage } from "../store";
-import MessageList from "./generalChat/messageList";
-import GeneralChat from "./generalChat/index";
+import MessageList from "./GeneralChat/messageList";
+import GeneralChat from "./GeneralChat/index";
 import WagerComponent from "./wagerComponent";
-import { Header, Icon, Image, Segment, Grid, Button } from 'semantic-ui-react'
-// const firebase = require("firebase");
-// require("firebase/firestore");
-
-// var config = {
-//   apiKey: "AIzaSyD-SRNhQPjUTiCCFjb8miJPkvaNwaEIvxA",
-//   authDomain: "mafia-blockchain.firebaseapp.com",
-//   databaseURL: "https://mafia-blockchain.firebaseio.com",
-//   projectId: "mafia-blockchain",
-//   storageBucket: "mafia-blockchain.appspot.com",
-//   messagingSenderId: "291156435310"
-// };
-
-// firebase.initializeApp(config);
-
-// var db = firebase.firestore();
+import { Header, Icon, Image, Segment, Grid, Button } from "semantic-ui-react";
 
 class SingleWagerView extends Component {
   constructor(props) {
@@ -31,97 +16,94 @@ class SingleWagerView extends Component {
     this.state = {
       messages: [],
       wager: this.props.match.params.address,
-      currentUser: ""
+      authUser: "",
     };
     this.onClick = this.onClick.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     var email;
-
     auth.onAuthStateChanged(function(user) {
-      if (user) { 
+      if (user) {
         email = user.email;
-        }
-      })
-
+      }
+    });
+    db.collection('wagers').onSnapshot(snapshot => {
     this.setState({
-      currentUser: email
+      authUser : email
     })
+  })
   }
 
-  onClick= (event) => {
+  onClick = event => {
     event.preventDefault();
-    this.props.history.push('/')
-  }
-
-
+    this.props.history.push("/wagers");
+  };
 
   render() {
-    let email
+    let email;
     // auth.onAuthStateChanged(function(user) {
-    //   if (user) { 
+    //   if (user) {
     //     // User is signed in.
     //     email = user.email;
     //   }}
     // )
-    const wagerA = this.state.wager.split('vs')[0];
-    const wagerB = this.state.wager.split('vs')[1];
-    console.log("auth: ", auth.currentUser)
-    console.log("state: ", this.state.currentUser)
-    if (!this.state.currentUser) {
-      return (
-        <div className="App">
-          <Segment inverted>
-            <Header inverted as="h2" icon textAlign="center">
-              <Grid columns={3}>
-                <Grid.Column>
-                  <Button circular onClick={this.onClick}>
-                    <Icon name="home" circular />
-                  </Button>
-                </Grid.Column>
-                <Grid.Column>
-                  <Icon name="users" circular />
-                </Grid.Column>
-              </Grid>
+    const wagerA = this.state.wager.split("vs")[0];
+    const wagerB = this.state.wager.split("vs")[1];
+    console.log("auth: ", auth.currentUser);
+    console.log("state: ", this.state.currentUser);
+    return (this.state.currentUser) ? (
+      <div className="App">
+        <Segment inverted>
+          <Header inverted as="h2" icon textAlign="center">
+            <Grid columns={3}>
+              <Grid.Column>
+                <Button circular onClick={this.onClick}>
+                  <Icon name="home" circular />
+                </Button>
+              </Grid.Column>
+              <Grid.Column>
+                <Icon name="users" circular />
+              </Grid.Column>
+            </Grid>
+            <Header.Content>
+              {wagerA} vs. {wagerB}
+            </Header.Content>
+            <Grid.Column>
               <Header.Content>
-                {wagerA} vs. {wagerB}
+                Current logged in as {this.state.currentUser}
               </Header.Content>
-            </Header>
-          </Segment>
-          <Grid>
-            <Grid.Column width={8}>
-              <GeneralChat wager={this.state.wager} />
             </Grid.Column>
-            <Grid.Column width={8}>
-              <WagerComponent wager={this.state.wager} />
-            </Grid.Column>
-          </Grid>
-        </div>
-      )
-    } else {
-      return (
-        <div className="App">
-          <Segment inverted>
-            <Header inverted as="h2" icon textAlign="center">
-              <Grid columns={3}>
-                <Grid.Column>
-                  <Button circular onClick={this.onClick}>
-                    <Icon name="home" circular />
-                  </Button>
-                </Grid.Column>
-                <Grid.Column>
-                  <Icon name="users" circular />
-                </Grid.Column>
-              </Grid>
-              <Header.Content>
-                Pleaes Sign In To See Wager Details
-              </Header.Content>
-            </Header>
-          </Segment>
-          </div>
-      )
-    }
+          </Header>
+        </Segment>
+        <Grid>
+          <Grid.Column width={8}>
+            <GeneralChat wager={this.state.wager} />
+          </Grid.Column>
+          <Grid.Column width={8}>
+            <WagerComponent wager={this.state.wager} />
+          </Grid.Column>
+        </Grid>
+      </div>
+    ) : (
+      <div className="App">
+        <Segment inverted>
+          <Header inverted as="h2" icon textAlign="center">
+            <Grid columns={3}>
+              <Grid.Column>
+                <Button circular onClick={this.onClick}>
+                  <Icon name="home" circular />
+                </Button>
+              </Grid.Column>
+              <Grid.Column>
+                <Icon name="users" circular />
+              </Grid.Column>
+            </Grid>
+            <Header.Content>Pleaes Sign In To See Wager Details</Header.Content>
+          </Header>
+        </Segment>
+      </div>
+    );
   }
 }
 
