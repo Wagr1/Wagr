@@ -15,14 +15,13 @@ class DirectChatCreation extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(evt) {
-    evt.preventDefault();
-    console.log(evt.target)
-    this.setState({user: evt.target.value})
+  handleChange = event => {
+    event.preventDefault();
+    this.setState({user: event.target.value})
   }
-
-  handleSubmit(evt) {
-    evt.preventDefault();
+  
+  handleSubmit = event => {
+    event.preventDefault();
     const chatName = auth.currentUser.email + this.state.user
     db
       .collection("privateChats")

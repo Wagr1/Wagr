@@ -18,7 +18,7 @@ class GeneralChat extends Component {
     this.onClick = this.onClick.bind(this);
   }
 
-  onClick() {
+  onClick = () => {
     this.props.history.push('/')
   }
 
@@ -33,24 +33,4 @@ class GeneralChat extends Component {
   }
 }
 
-const mapStateToProps = function(state, ownProps) {
-  return {
-    // newMessageEntry: state.newMessageEntry,
-    // name: state.name
-  };
-};
-
-const mapDispatchToProps = function(dispatch, ownProps) {
-  return {
-    // handleChange (evt) {
-    //   dispatch(writeMessage(evt.target.value));
-    // },
-    // handleSubmit (name, content, evt) {
-    //   evt.preventDefault();
-    //   // const { channelId } = ownProps;
-    //   dispatch(postMessage({ name, content, evt }));
-    //   // dispatch(writeMessage(''));
-  };
-};
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(GeneralChat));
+export default withRouter(GeneralChat);

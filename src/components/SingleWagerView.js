@@ -49,7 +49,6 @@ class SingleWagerView extends Component {
     this.betSideTwo = this.betSideTwo.bind(this);
     this.paySideOne = this.paySideOne.bind(this);
     this.paySideTwo = this.paySideTwo.bind(this);
-    this.updateProfileWagerAmount = this.updateProfileWagerAmount.bind(this)
   }
 
 
@@ -136,32 +135,6 @@ class SingleWagerView extends Component {
     }];
     return <Card.Group items={items} />;
   }
-
-  // updateProfileWagerAmount(type) {
-  //   const account = this.state.accounts[0]
-  //   console.log('account!: ', account)
-  //   // event.preventDefault()
-  //   const minBet = this.state.minimumBet
-  //   console.log("MADE IT HERERERERERERERE")
-  //   let totalWagerRef = db.collection('users').doc(account).collection('wagerInfo').doc(type);
-  //   let count = 0
-  //   return db.runTransaction(function(transaction) {
-  //     return transaction.get(totalWagerRef).then(function(totalWagerDoc) {
-  //       console.log(totalWagerDoc, ++count)
-  //       if (!totalWagerDoc.exists) {
-  //         console.log('doesnt exisst......')
-  //         totalWage rRef.set({ amount: minBet })
-  //       } else {
-  //         console.log("elseeee")
-  //           newTotal = 100
-  //         console.log("am i here")
-  //         transaction.update(db.collection('users').doc(account).collection('wagerInfo').doc(type), { amount: newTotal })
-  //       }
-  //     }).then(console.log("Transaction successful!"))
-  //   }).catch(function(error) {
-  //     console.log(error.message)
-  //   })
-  // }
   
   async betSideOne(event) {
     event.preventDefault();
