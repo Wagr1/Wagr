@@ -59,7 +59,7 @@ class ProfilePage extends Component {
       <div>
         <Segment inverted>
           <Header as="h2" icon textAlign="center">
-            <Icon name="ethereum" circular />
+          <i className="ethereum icon circular"></i>
             <Header.Content>
               <h2 className="ui blue header">
                 Hello {auth.currentUser.displayName}

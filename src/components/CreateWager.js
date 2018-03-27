@@ -77,7 +77,7 @@ class CreateWager extends Component {
       <div className="App">
         <Segment inverted>
           <Header inverted as="h2" icon textAlign="center">
-          <Icon name="ethereum" circular />
+          <i className="ethereum icon circular"></i>
             <Header.Content>
             <Grid columns= {3}>
             <Grid.Column>
@@ -96,7 +96,7 @@ class CreateWager extends Component {
         <div classname='borderFix' centered>
           <Grid className="segment centered">
 
-              <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
+              <Form className= "createWager" onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                 <Form.Field>
                 <label>What's The Name Of Your Wagr</label>
                 <div className="fields">

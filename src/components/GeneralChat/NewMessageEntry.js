@@ -4,6 +4,7 @@ import { db, auth } from "../../fire/firestore";
 import { connect } from "react-redux";
 import { writeMessage } from "../../store";
 import { Form, Button } from "semantic-ui-react";
+import "../App.css"
 
 class NewMessageEntry extends Component {
   constructor(props) {
@@ -48,12 +49,14 @@ class NewMessageEntry extends Component {
     const { name, newMessageEntry, handleChange, handleSubmit } = this.props;
     return (
       <Form reply onSubmit={evt => this.sendMessage(evt, newMessageEntry)}>
+      <div id= "chat">
         <Form.TextArea
           type="text"
           value={newMessageEntry}
           onChange={handleChange}
           placeholder="Say something nice..."
           />
+        </div>
         <Button content="Add Reply" labelPosition="left" icon="edit" primary />
       </Form>
     );

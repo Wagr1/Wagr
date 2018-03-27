@@ -6,10 +6,8 @@ import { db, auth, userById, email } from "../fire/firestore";
 import history from "../history";
 import store, { getAllWagers } from "../store";
 import { browserHistory } from "react-router";
-import web3 from "../web3";
-import mafiaContract from "../mafiaContract";
+import web3 from "../ether/web3";
 import GeneralChat from "./GeneralChat/";
-import { definedRole, randomNameGenerator } from "../utils";
 import SingleWagerView from "./SingleWagerView";
 import basketball from "./basketball.png";
 import { Header, Icon, Image, Segment, Grid, Button, Card, Dropdown } from 'semantic-ui-react'
@@ -92,7 +90,7 @@ class AllWagers extends Component {
         <div>
           <Segment inverted>
             <Header inverted as="h2" icon textAlign="center">
-              <Icon name="ethereum" circular />
+            <i className="ethereum icon circular"></i>
               <Header.Content>
                 <h2 className="ui blue header">
                   Welcome 2 Wagr

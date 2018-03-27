@@ -225,7 +225,7 @@ class SingleWagerView extends Component {
         <Segment inverted>
           <Header inverted as="h2" icon textAlign="center">
           <Header.Content>
-              <Icon name="ethereum" circular />
+          <i className="ethereum icon circular"></i>
             </Header.Content>
             <Header.Content>
             <Grid columns={3}>
