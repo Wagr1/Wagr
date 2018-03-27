@@ -4,6 +4,12 @@ import Wager from '../ether/wagers'
 
 
 const FETCH_WAGERS = 'FETCH_WAGERS'
+const SORTED_WAGERS = 'SORTED_WAGERS'
+
+export function getSortedWagers(listOfWagers) {
+  const action = { type: SORTED_WAGERS, list: listOfWagers }
+  return action
+}
 
 export function getAllWagers() {
   return async function (dispatch) {
@@ -23,9 +29,11 @@ export function getAllWagers() {
           side1: wagerObj[9],
           side2: wagerObj[10]
         }
+        console.log(wagerInfo.complete)
         return wagerInfo
       }))
       const action = { type: FETCH_WAGERS, list: listOfWagers }
+      console.log("WE IN HERE")
       dispatch(action)
     } catch (err) {
       console.error(err)
@@ -39,6 +47,9 @@ export default function reducer(state = [], action) {
   switch (action.type) {
 
     case FETCH_WAGERS:
+      return action.list
+
+    case SORTED_WAGERS:
       return action.list
 
     default:

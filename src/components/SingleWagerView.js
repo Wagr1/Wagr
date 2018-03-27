@@ -15,7 +15,8 @@ import {
   Grid,
   Button,
   Card,
-  Label
+  Label,
+  Message
 } from "semantic-ui-react";
 
 import Wager from "../ether/wagers";
@@ -41,7 +42,10 @@ class SingleWagerView extends Component {
       rightSide: '',
       title: '',
       accounts: [],
-      description: ''
+      description: '',
+      loading: false,
+      errorMessage: '',
+      error: ''
     };
     this.onClick = this.onClick.bind(this);
     this.renderCards = this.renderCards.bind(this);
@@ -72,7 +76,8 @@ class SingleWagerView extends Component {
           rightSide: right,
           title: summary[6],
           accounts: accounts,
-          description: summary[8]
+          description: summary[8],
+          error: "error"
         });
       } catch (err) {
         console.error(err);
@@ -88,10 +93,10 @@ class SingleWagerView extends Component {
     if(this.state.accounts.includes(this.state.manager)){
       return (
         <div>
-          <Button onClick={this.paySideOne}>
+          <Button onClick={this.paySideOne} error={!!this.state.errorMessage}>
             {this.state.leftSide} Won!
           </Button>
-          <Button onClick={this.paySideTwo}>
+          <Button onClick={this.paySideTwo} error={!!this.state.errorMessage}>
             {this.state.rightSide} Won!
           </Button>
         </div>
@@ -101,29 +106,42 @@ class SingleWagerView extends Component {
 
   async paySideOne(event) {
     event.preventDefault()
-    console.log('SCONDSTATE', this.state.accounts)
     if(this.state.accounts.includes(this.state.manager)){
       const wager = Wager(this.props.match.params.address);
       const manager = await wager.methods.manager().call();
 
-      await wager.methods.payout(true).send({
-        from: manager
-      })
+      this.setState({ loading: true, errorMessage: '' });
+      try {
+        await wager.methods.payout(true).send({
+          from: manager
+        })
+        this.setState({error: ''})
+      } catch(err) {
+        this.setState({ errorMessage: "You either do not have enough ether, or you're not the manager of this Wagr!", error: "" });
+      }
     }
+    this.setState({ loading: false });
     this.props.history.push('/wagers');
   }
 
   async paySideTwo(event) {
     event.preventDefault()
-    console.log('SCONDSTATE', this.state.accounts)
     if(this.state.accounts.includes(this.state.manager)){
       const wager = Wager(this.props.match.params.address);
       const manager = await wager.methods.manager().call();
 
-      await wager.methods.payout(true).send({
-        from: manager
-      })
+      this.setState({ loading: true, errorMessage: '' });
+      try {
+        await wager.methods.payout(true).send({
+          from: manager
+        })
+        this.setState({error: ''})
+      } catch (err) {
+        this.setState({ errorMessage: "You either do not have enough ether, or you're not the manager of this Wagr!", error: "" });
+      }
+
     }
+    this.setState({ loading: false });
     this.props.history.push('/wagers');
   }
 
@@ -131,17 +149,16 @@ class SingleWagerView extends Component {
     const items = [{
       header: `The Current Pot is ${web3.utils.fromWei(this.state.pot, 'ether')} ether!`,
       meta: this.state.title,
-      description: `There are ${this.state.totalUsers} people invovled in this Wager! Place Your Wagers Below!`
+      description: `There are ${this.state.totalUsers} people invovled in this Wagr! Place Your Bets Below!`
     }];
     return <Card.Group items={items} />;
   }
-  
+
   async betSideOne(event) {
     event.preventDefault();
     const wager = Wager(this.props.match.params.address);
 
     this.setState({ loading: true, errorMessage: '' });
-
     try {
       const accounts = await web3.eth.getAccounts();
       await wager.methods.joinBet(true).send({
@@ -149,18 +166,17 @@ class SingleWagerView extends Component {
         value: web3.utils.toWei(this.state.minimumBet, 'ether'),
       });
       const summary = await wager.methods.getWagerSummary().call();
-      console.log('maybe this is sthe problem')
       this.setState({
         pot: summary[1],
         totalUsers: summary[2],
         sideOne: summary[3],
         sideTwo: summary[4],
       });
-      
+      this.setState({error: ''})
     } catch (err) {
-      this.setState({errorMessage: err.message})
+      this.setState({errorMessage: "You may have already bet in this Wagr! No Cheating!", error: ""})
     }
-    
+    this.setState({ loading: false });
   }
 
   async betSideTwo(event) {
@@ -182,77 +198,88 @@ class SingleWagerView extends Component {
         sideOne: summary[3],
         sideTwo: summary[4],
       });
+      this.setState({error: ''})
     } catch (err) {
-      this.setState({errorMessage: err.message})
+      this.setState({errorMessage: "You may have already bet in this Wagr! No Cheating!", error: ""})
     }
-
+    this.setState({ loading: false });
   }
 
   render() {
     let email;
-
+    let loading = this.state.loading ? "loading" : "loading-false"
 
     if (this.state.currentUser) {
     return this.state.manager === "" ? null : (
-      <div className="App">
-        <Segment inverted>
-          <Header inverted as="h2" icon textAlign="center">
-          <Header.Content>
-          <i className="ethereum icon circular"></i>
-            </Header.Content>
+      <div>
+        <div id={loading} className="ui active dimmer">
+          <div className="ui large text loader">
+            <p className="loading-text" >This Honestly Takes A Long Time! Be Patient! Don't Leave The Page!
+            </p>
+          </div>
+        </div>
+        <div className="App">
+          <Segment inverted>
+            <Header inverted as="h2" icon textAlign="center">
             <Header.Content>
-            <Grid columns={3}>
-            <Grid.Column>
-                <Button className= "ui left floated primary button"circular onClick={this.onClick}>
-                  <Icon name="home" circular />
-                </Button>
-              </Grid.Column>
+            <i className="ethereum icon circular"></i>
+              </Header.Content>
+              <Header.Content>
+              <Grid columns={3}>
               <Grid.Column>
-              <h2 className="ui blue header">{this.state.leftSide} vs. {this.state.rightSide}</h2>
+                  <Button className= "ui left floated primary button"circular onClick={this.onClick}>
+                    <Icon name="home" circular />
+                  </Button>
+                </Grid.Column>
+                <Grid.Column>
+                <h2 className="ui blue header">{this.state.leftSide} vs. {this.state.rightSide}</h2>
+                </Grid.Column>
+                </Grid>
+              </Header.Content>
+            </Header>
+          </Segment>
+          <div className='borderFix'>
+            <Grid columns={2}>
+              <Grid.Column width={9}>
+                <GeneralChat wager={this.state.title} chatType="wager"/>
               </Grid.Column>
-              </Grid>
-            </Header.Content>
-          </Header>
-        </Segment>
-        <div className='borderFix'>
-          <Grid columns={2}>
-            <Grid.Column width={9}>
-              <GeneralChat wager={this.state.title} chatType="wager"/>
-            </Grid.Column>
-            <Grid.Column width={7} className="ui centered grid">
-            <Grid.Row>
-              <div>
-                {this.renderCards()}
-              </div>
-            </Grid.Row>
-            <Grid.Row>
+              <Grid.Column width={7} className="ui centered grid">
+              <Grid.Row>
+                <div>
+                  {this.renderCards()}
+                </div>
+              </Grid.Row>
+              <Grid.Row>
+                <Button as='div' labelPosition='right'>
+                <Button color='red' value={this.state.sideOne} onClick={this.betSideOne}>
+                  <Icon name='ethereum' />
+                  { this.state.leftSide }
+                </Button>
+                <Label as='a' basic color='red' pointing='left'>{this.state.sideOne}  Bets Placed</Label>
+              </Button>
+              <br/>
               <Button as='div' labelPosition='right'>
-              <Button color='red' value={this.state.sideOne} onClick={this.betSideOne}>
-                <Icon name='ethereum' />
-                { this.state.leftSide }
+                <Button color='blue' value={this.state.sideTwo} onClick={this.betSideTwo} error={!!this.state.errorMessage}>
+                  <Icon name='ethereum' />
+                  { this.state.rightSide }
+                </Button>
+                <Label as='a' basic color='blue' pointing='left'>{this.state.sideTwo}  Bets Placed</Label>
               </Button>
-              <Label as='a' basic color='red' pointing='left'>{this.state.sideOne}  Bets Placed</Label>
-            </Button>
-            <br/>
-            <Button as='div' labelPosition='right'>
-              <Button color='blue' value={this.state.sideTwo} onClick={this.betSideTwo}>
-                <Icon name='ethereum' />
-                { this.state.rightSide }
-              </Button>
-              <Label as='a' basic color='blue' pointing='left'>{this.state.sideTwo}  Bets Placed</Label>
-            </Button>
-              <Grid.Column width={6} />
-            </Grid.Row>
-            <div className="ui raised segment">
-              <p>
-                {this.state.description}
-              </p>
-            </div>
-            {this.renderPayoutButton()}
-            </Grid.Column>
-          </Grid>
+                <Grid.Column width={6} />
+              </Grid.Row>
+              <div className="ui raised segment">
+                <p>
+                  {this.state.description}
+                </p>
+              </div>
+              {this.renderPayoutButton()}
+              <Message id={`${this.state.error}`} error header="Oops!" content={this.state.errorMessage} />
+              </Grid.Column>
+            </Grid>
+          </div>
         </div>
       </div>
+
     )
   } else {
     this.props.history.push('/')

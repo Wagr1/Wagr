@@ -22,6 +22,7 @@ contract Wager {
 
   User[] public users;
   address public manager;
+  string public url;
 
   address[] side1Array;
   address[] side2Array;

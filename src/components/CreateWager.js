@@ -6,7 +6,7 @@ import { Router } from './routes';
 import { withRouter } from 'react-router-dom';
 import { db, auth, userById } from "../fire/firestore";
 import "./App.css";
-
+import { connect } from "react-redux";
 
 import {
   Header,
@@ -23,13 +23,24 @@ import {
 } from "semantic-ui-react";
 
 class CreateWager extends Component {
-  state = {
-    minimumBet: '',
-    errorMessage: '',
-    loading: false,
-    leftSide: '',
-    rightSide: '',
-    description: ''
+  constructor(props) {
+    super(props)
+    this.state = {
+      minimumBet: '',
+      errorMessage: '',
+      loading: false,
+      leftSide: '',
+      rightSide: '',
+      description: '',
+      currentUser: this.props.currentUser
+    }
+    this.onClick = this.onClick.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
+  }
+
+  onClick = event => {
+    event.preventDefault();
+    this.props.history.push("/wagers")
   }
 
   componentDidMount(){
@@ -62,7 +73,7 @@ class CreateWager extends Component {
           from: accounts[0]
         });
       const createdContract = await factory.methods.getDeployedwagers().call()
-      console.log("new-new: ", createdContract.slice(-1))
+
       this.props.history.push('/wagers');
     } catch (err) {
       this.setState({ errorMessage: err.message });
@@ -73,82 +84,107 @@ class CreateWager extends Component {
   render() {
     let desc = ''
     let arr = []
-    return (
-      <div className="App">
-        <Segment inverted>
-          <Header inverted as="h2" icon textAlign="center">
-          <i className="ethereum icon circular"></i>
-            <Header.Content>
-            <Grid columns= {3}>
-            <Grid.Column>
-            <Button className= "ui left floated primary button" circular onClick={this.onClick}>
-              <Icon name="home" circular />
-            </Button>
-            </Grid.Column>
-            <Grid.Column>
-              <h2 className ="ui blue text header">Create a Wagr For All
-              </h2>
-            </Grid.Column>
-            </Grid>
-            </Header.Content>
-          </Header>
-        </Segment>
-        <div classname='borderFix' centered>
-          <Grid className="segment centered">
-
-              <Form className= "createWager" onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
-                <Form.Field>
-                <label>What's The Name Of Your Wagr</label>
-                <div className="fields">
-                    <div className="nine wide field">
-                      <Input
-                        value={this.state.leftSide}
-                        onChange={event => this.setState({ leftSide: event.target.value })}
-                        label="Side One"
-                        labelPosition="right"
-                      />
-                    </div>
-                    <label className="large text">Vs.</label>
-                    <div className="nine wide field">
-                      <Input
-                        value={this.state.rightSide}
-                        onChange={event => this.setState({ rightSide: event.target.value })}
-                        label="Side Two"
-                        labelPosition="right"
-                      />
-                    </div>
-                  </div>
-                </Form.Field>
-                <Form.Field>
-                  <label>How much do you want the buy in to be?</label>
-                  <Input
-                    value={this.state.minimumBet}
-                    onChange={event => this.setState({ minimumBet: event.target.value })}
-                    label="ether"
-                    labelPosition="right"
-                  />
-                </Form.Field>
-                <Form.Field>
-                  <label>Describe What Your Wagr Is Going To Be Below!</label>
-                  <textarea
-                    rows="2"
-                    value={desc || this.state.description}
-                    onChange={event => this.setState({ description: event.target.value })}
-                    label="description"
-                    labelPosition="right"
-                  >
-                  </textarea>
-                </Form.Field>
-                <Message error header="Oops!" content={this.state.errorMessage} />
-                <Button loading={this.state.loading} primary>
-                  Create!
-                </Button>
-              </Form>
-
-          </Grid>
+    let loading = this.state.loading ? "loading" : "loading-false"
+    if(this.state.currentUser){
+      return (
+        <div>
+        <div id={loading} className="ui active dimmer">
+        <div className="ui large text loader"><p className="loading-text" >This Honestly Takes A Long Time! Be Patient! Don't Leave The Page!
+        </p></div>
         </div>
-      </div>
-    )
+        <div className={`App`}>
+          <Segment inverted>
+            <Header inverted as="h2" icon textAlign="center">
+            <i className="ethereum icon circular"></i>
+              <Header.Content>
+              <Grid columns= {3}>
+              <Grid.Column>
+              <Button className= "ui left floated primary button" circular onClick={this.onClick}>
+                <Icon name="home" circular />
+              </Button>
+              </Grid.Column>
+              <Grid.Column>
+                <h2 className ="ui blue text header">Create a Wagr For All
+                </h2>
+              </Grid.Column>
+              </Grid>
+              </Header.Content>
+            </Header>
+          </Segment>
+          <div classname='borderFix' centered>
+            <Grid className="segment centered">
+
+                <Form className= "createWager" onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
+                  <Form.Field>
+                  <h3>What's The Name Of Your Wagr</h3>
+                  <div className="fields">
+                      <div className="nine wide field">
+                        <Input
+                          value={this.state.leftSide}
+                          onChange={event => this.setState({ leftSide: event.target.value })}
+                          label="Side One"
+                          labelPosition="left"
+                          required
+                        />
+                      </div>
+                      <label className="large text">Vs.</label>
+                      <div className="nine wide field">
+                        <Input
+                          value={this.state.rightSide}
+                          onChange={event => this.setState({ rightSide: event.target.value })}
+                          label="Side Two"
+                          labelPosition="right"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </Form.Field>
+                  <Form.Field>
+                    <h4>How much do you want the buy in to be?</h4>
+                    <Input
+                      value={this.state.minimumBet}
+                      onChange={event => this.setState({ minimumBet: event.target.value })}
+                      label="ether"
+                      labelPosition="right"
+                      required
+                    />
+                  </Form.Field>
+                  <Form.Field>
+                    <label>Describe What Your Wagr Is Going To Be Below!</label>
+                    <textarea
+                      rows="2"
+                      value={desc || this.state.description}
+                      onChange={event => this.setState({ description: event.target.value })}
+                      label="description"
+                      labelPosition="right"
+                      required
+                    >
+                    </textarea>
+                  </Form.Field>
+                  <Message error header="Oops!" content={this.state.errorMessage} />
+                  <Button primary>
+                    Create!
+                  </Button>
+                </Form>
+
+            </Grid>
+          </div>
+        </div>
+
+        </div>
+      )
+    } else {
+        this.props.history.push('/')
+        return null
+
+    }
   }
 }
-export default withRouter(CreateWager);
+
+const mapStateToProps = function (state, ownProps) {
+  return {
+    currentUser: state.user
+  };
+};
+
+export default withRouter(connect(mapStateToProps, null)(CreateWager));

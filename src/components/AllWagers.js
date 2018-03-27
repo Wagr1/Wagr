@@ -4,7 +4,7 @@ import "./App.css";
 import { Switch, Route, Link, withRouter } from "react-router-dom";
 import { db, auth, userById, email } from "../fire/firestore";
 import history from "../history";
-import store, { getAllWagers } from "../store";
+import store, { getAllWagers, getSortedWagers } from "../store";
 import { browserHistory } from "react-router";
 import web3 from "../ether/web3";
 import GeneralChat from "./GeneralChat/";
@@ -32,6 +32,7 @@ class AllWagers extends Component {
 
   componentDidMount() {
     this.props.fetchAllWagers()
+    console.log("this should be after we in here")
     this.setState({ listOfWagers: this.props.listOfWagers })
   }
 
@@ -59,7 +60,7 @@ class AllWagers extends Component {
 
   onClickSort = (event, data) => {
     event.preventDefault()
-    let listOfWagersSorted = this.state.listOfWagers.slice()
+    let listOfWagersSorted = this.props.listOfWagers.slice()
     let type = data.value.split("-")[0]
     let order = data.value.split("-")[1] + "-" + data.value.split("-")[2]
     if (order === 'low-high') {
@@ -71,9 +72,7 @@ class AllWagers extends Component {
         return parseInt(b[type]) - parseFloat(a[type])
     })
   }
-    this.setState({
-      listOfWagers: sortedList
-    })
+    this.props.fetchSortedWagers(sortedList)
   }
 
   profilePage = (event) => {
@@ -118,7 +117,7 @@ class AllWagers extends Component {
                 </Button>
               </Header.Content>
               </Grid.Column>
-              </Grid> 
+              </Grid>
             </Header>
           </Segment>
           <div className='borderFix'>
@@ -154,7 +153,7 @@ class AllWagers extends Component {
                           <Card.Header />
                           <Link to={`/wagers/${wager.address}`} value={wager.address}>
                             Click here to bet on
-                            <br></br>
+                            <br/>
                             {wager.title}
                           </Link>
                           Ante: {wager.ante} Ether
@@ -191,6 +190,9 @@ const mapDispatchToProps = function (dispatch, ownProps) {
   return {
     fetchAllWagers() {
       dispatch(getAllWagers())
+    },
+    fetchSortedWagers(listOfWagers) {
+      dispatch(getSortedWagers(listOfWagers))
     }
   }
 }
