@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import factory from '../ether/factory';
 import web3 from '../ether/web3';
@@ -7,20 +6,10 @@ import { withRouter } from 'react-router-dom';
 import { db, auth, userById } from "../fire/firestore";
 import "./App.css";
 import { connect } from "react-redux";
+import NavBar from './NavBar'
+import HomeButton from './HomeButton'
 
-import {
-  Header,
-  Icon,
-  Image,
-  Segment,
-  Grid,
-  Button,
-  Card,
-  Label,
-  Form,
-  Input,
-  Message
-} from "semantic-ui-react";
+import { Header, Icon, Image, Segment, Grid, Button, Card, Label, Form, Input, Message } from "semantic-ui-react";
 
 class CreateWager extends Component {
   constructor(props) {
@@ -38,7 +27,7 @@ class CreateWager extends Component {
     this.onSubmit = this.onSubmit.bind(this)
   }
 
-  onClick = event => {
+  goHome = event => {
     event.preventDefault();
     this.props.history.push("/wagers")
   }
@@ -85,7 +74,9 @@ class CreateWager extends Component {
     let desc = ''
     let arr = []
     let loading = this.state.loading ? "loading" : "loading-false"
-    if(this.state.currentUser){
+    const currentUser = auth.currentUser.displayName
+
+    if (this.state.currentUser) {
       return (
         <div>
         <div id={loading} className="ui active dimmer">
@@ -93,23 +84,9 @@ class CreateWager extends Component {
         </p></div>
         </div>
         <div className={`App`}>
-          <Segment inverted>
-            <Header inverted as="h2" icon textAlign="center">
-            <i className="ethereum icon circular"></i>
-              <Header.Content>
-              <Grid columns= {3}>
-              <Grid.Column>
-              <Button className= "ui left floated primary button" circular onClick={this.onClick}>
-                <Icon name="home" circular />
-              </Button>
-              </Grid.Column>
-              <Grid.Column>
-                <h2 className ="ui blue text header">Create a Wagr For All
-                </h2>
-              </Grid.Column>
-              </Grid>
-              </Header.Content>
-            </Header>
+          <Segment inverted textAlign="center">
+            <NavBar message={'Create a Weijr For All'} />
+            <HomeButton goHome={this.goHome} />
           </Segment>
           <div classname='borderFix' centered>
             <Grid className="segment centered">

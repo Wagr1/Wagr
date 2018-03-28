@@ -6,7 +6,7 @@ import { connect, Provider } from 'react-redux';
 import AllWagers from './AllWagers';
 import App from './App'
 import SingleWagerView from './SingleWagerView';
-// import SignUp from './signUp'
+import SignUp from './SignUp'
 import CreateWager from './CreateWager';
 import ProfilePage from './ProfilePage'
 import DirectChatCreation from './DirectChat/index'
@@ -20,6 +20,7 @@ class Routes extends Component {
     return (
       <Switch>
         <Route exact path="/" component={ App } />
+        <Route exact path="/signup" component={ SignUp } />
         <Route exact path='/new-wager' component={ CreateWager } />
         <Route exact path="/wagers" component={ AllWagers } />
         <Route exact path="/wagers/:address" component={SingleWagerView} />
@@ -33,14 +34,4 @@ class Routes extends Component {
   }
 }
 
-const mapState = state => {
-  return {
-  }
-};
-
-const mapDispatch = dispatch => {
-  return {
-  }
-}
-
-export default withRouter(connect(mapState, mapDispatch)(Routes))
+export default withRouter(Routes)
