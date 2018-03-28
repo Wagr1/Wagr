@@ -49,8 +49,7 @@ class SingleWagerView extends Component {
     };
     this.goHome = this.goHome.bind(this);
     this.renderCards = this.renderCards.bind(this);
-    this.betSideOne = this.betSideOne.bind(this);
-    this.betSideTwo = this.betSideTwo.bind(this);
+    this.betSide = this.betSide.bind(this);
     this.paySideOne = this.paySideOne.bind(this);
     this.paySideTwo = this.paySideTwo.bind(this);
   }
@@ -181,84 +180,44 @@ class SingleWagerView extends Component {
     return <Card.Group items={items} />;
   }
 
-  async betSideOne(event) {
+   betSide(event) {
     event.preventDefault();
-    const wager = Wager(this.props.match.params.address);
-    const accounts = await web3.eth.getAccounts();
-    const summaryCheck = await wager.methods.getWagerSummary().call();
-    const arrayOfParticipants = summaryCheck[9];
-    const check = arrayOfParticipants.includes(accounts[0])
-    if (check || (accounts[0] === summaryCheck[5])) {
-      this.setState({
-        errorMessage:
-          "You Either Don't Have Enough Ether Or You May Have Already Bet In This Weijr! You Might Even Be The Manager Of This Weijr! No Cheating!",
-        error: ""
-      });
-    } else {
-      this.setState({ loading: true, errorMessage: "" });
-      try {
-        await wager.methods.joinBet(true).send({
-          from: accounts[0],
-          value: web3.utils.toWei(this.state.minimumBet, "ether")
-        });
-        const summary = await wager.methods.getWagerSummary().call();
-        this.setState({
-          pot: summary[1],
-          totalUsers: summary[2],
-          sideOne: summary[3],
-          sideTwo: summary[4],
-          error: "error"
-        });
-      } catch (err) {
-        this.setState({
-          errorMessage:
-            "You Either Don't Have Enough Ether Or You May Have Already Bet In This Weijr! No Cheating!",
-          error: ""
-        });
-      }
-    }
-    this.setState({ loading: false });
-  }
-
-  async betSideTwo(event) {
-    event.preventDefault();
-    const wager = Wager(this.props.match.params.address);
-    const accounts = await web3.eth.getAccounts();
-    const summaryCheck = await wager.methods.getWagerSummary().call();
-    const arrayOfParticipants = summaryCheck[9];
-    const check = arrayOfParticipants.includes(accounts[0])
-    if (check || (accounts[0] === summaryCheck[5])) {
-      this.setState({
-        errorMessage:
-          "You Either Don't Have Enough Ether Or You May Have Already Bet In This Weijr! You Might Even Be The Manager Of This Weijr! No Cheating!",
-        error: ""
-      });
-      } else {
-      this.setState({ loading: true, errorMessage: "" });
-
-      try {
-        const accounts = await web3.eth.getAccounts();
-        await wager.methods.joinBet(false).send({
-          from: accounts[0],
-          value: web3.utils.toWei(this.state.minimumBet, "ether")
-        });
-        const summary = await wager.methods.getWagerSummary().call();
-        this.setState({
-          pot: summary[1],
-          totalUsers: summary[2],
-          sideOne: summary[3],
-          sideTwo: summary[4],
-          error: "error"
-        });
-      } catch (err) {
-        this.setState({
-          errorMessage:
-            "You Either Don't Have Enough Ether Or You May Have Already Bet In This Weijr! No Cheating!",
-          error: ""
-        });
-      }
-    }
-    this.setState({ loading: false });
+    console.log(event.target)
+    // const wager = Wager(this.props.match.params.address);
+    // const accounts = await web3.eth.getAccounts();
+    // const summaryCheck = await wager.methods.getWagerSummary().call();
+    // const arrayOfParticipants = summaryCheck[9];
+    // const check = arrayOfParticipants.includes(accounts[0])
+    // if (check || (accounts[0] === summaryCheck[5])) {
+    //   this.setState({
+    //     errorMessage:
+    //       "You Either Don't Have Enough Ether Or You May Have Already Bet In This Weijr! You Might Even Be The Manager Of This Weijr! No Cheating!",
+    //     error: ""
+    //   });
+    // } else {
+    //   this.setState({ loading: true, errorMessage: "" });
+    //   try {
+    //     await wager.methods.joinBet(bool).send({
+    //       from: accounts[0],
+    //       value: web3.utils.toWei(this.state.minimumBet, "ether")
+    //     });
+    //     const summary = await wager.methods.getWagerSummary().call();
+    //     this.setState({
+    //       pot: summary[1],
+    //       totalUsers: summary[2],
+    //       sideOne: summary[3],
+    //       sideTwo: summary[4],
+    //       error: "error"
+    //     });
+    //   } catch (err) {
+    //     this.setState({
+    //       errorMessage:
+    //         "You Either Don't Have Enough Ether Or You May Have Already Bet In This Weijr! No Cheating!",
+    //       error: ""
+    //     });
+    //   }
+    // }
+    // this.setState({ loading: false });
   }
 
   render() {
@@ -292,7 +251,7 @@ class SingleWagerView extends Component {
                 </Grid.Row>
                 <Grid.Row>
                   <Button as='div' labelPosition='right'>
-                    <Button color='red' value={this.state.sideOne} onClick={this.betSideOne}>
+                    <Button color='red' type="true" value={this.state.sideOne} onClick={this.betSide}>
                       <Icon name='ethereum' />
                       {this.state.leftSide}
                     </Button>
@@ -300,7 +259,7 @@ class SingleWagerView extends Component {
                   </Button>
                   <br />
                   <Button as='div' labelPosition='right'>
-                    <Button color='blue' value={this.state.sideTwo} onClick={this.betSideTwo} error={!!this.state.errorMessage}>
+                    <Button color='blue' type ="false" value={this.state.sideTwo} onClick={this.betSide} error={!!this.state.errorMessage}>
                       <Icon name='ethereum' />
                       {this.state.rightSide}
                     </Button>
