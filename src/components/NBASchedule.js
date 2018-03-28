@@ -73,34 +73,34 @@ class NBASchedule extends Component {
   render() {
     if (this.state.games) {
       return (
-            <Grid columns={4}>
-              {this.state.games.map(game => (
-                <Grid.Column width="4">
-                  <Card
-                    key={game.id}
-                    className="ui segment centered"
-                    onClick={(evt) =>
-                      this.onClick(
-                        evt,
-                        game.away,
-                        game.home,
-                        game.date,
-                        game.time
-                      )
-                    }
-                  >
-                    <Image src={basketball} />
-                    <Card.Header />
-                    {game.away} vs. {game.home}
-                    <br />
-                    {game.date}
-                    <br />
-                    {game.time}
-                    <br />
-                  </Card>
-                </Grid.Column>
-              ))}
-            </Grid>
+        <Grid columns={4}>
+          {this.state.games.map(game => (
+            <Grid.Column width="4">
+              <Card
+                key={game.id}
+                className="ui segment centered"
+                onClick={(evt) =>
+                  this.onClick(
+                    evt,
+                    game.away,
+                    game.home,
+                    game.date,
+                    game.time
+                  )
+                }
+              >
+                <Image src={basketball} />
+                <Card.Header />
+                {game.away} vs. {game.home}
+                <br />
+                {game.date}
+                <br />
+                {game.time}
+                <br />
+              </Card>
+            </Grid.Column>
+          ))}
+        </Grid>
       );
     } else if (this.state.currentUser) {
       return <div>Loading...</div>;

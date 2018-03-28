@@ -10,10 +10,9 @@
   border-radius: 5px;
 }
 
-/* Form {
-  width: 30%;
-  align-self: center;
-} */
+Grid {
+  margin: 10px;
+}
 
 Field {
   align-self: center;
@@ -22,6 +21,7 @@ Field {
 .borderFix {
   border: 20px solid white;
   border-style: none;
+  margin: 10px;
 }
 
 .large.text {
@@ -50,5 +50,11 @@ Field {
 
 #error {
   display: none;
+}
+
+#all-wagers {
+  align-content: center;
+  text-align: center;
+  /* margin: 10px; */
 }
 

@@ -18,24 +18,10 @@ import Wager from "../ether/wagers";
 import NavBar from './NavBar'
 import HeaderButtons from './HeaderButtons'
 import { writeMessage } from "../store";
+import DropDownSort from './Utils/DropDownSort'
+import RenderWagers from "./RenderWagers";
 
-const DropDownSort = () => {
-  return (
-    <Grid columns={5}>
-      <Grid.Column></Grid.Column><Grid.Column></Grid.Column><Grid.Column></Grid.Column><Grid.Column></Grid.Column>
-      <Grid.Column>
-        <Dropdown text='Sort By' icon='filter' floating labeled button className='icon'>
-          <Dropdown.Menu>
-            <Dropdown.Item label={{ color: 'red', empty: true, circular: true }} text='Ante: Low-High' value="ante-low-high" onClick={this.onClickSort} />
-            <Dropdown.Item label={{ color: 'blue', empty: true, circular: true }} text='Ante: High-Low' value="ante-high-low" onClick={this.onClickSort} />
-            <Dropdown.Item label={{ color: 'red', empty: true, circular: true }} text='Pot Size: Low-High' value="pot-low-high" onClick={this.onClickSort} />
-            <Dropdown.Item label={{ color: 'blue', empty: true, circular: true }} text='Pot Size: High-Low' value="pot-high-low" onClick={this.onClickSort} />
-          </Dropdown.Menu>
-        </Dropdown>
-      </Grid.Column>
-    </Grid>
-  )
-}
+
 class AllWagers extends Component {
   constructor(props) {
     super(props);
@@ -114,32 +100,13 @@ class AllWagers extends Component {
               profilePage={this.profilePage} />
           </Segment>
           <div className='borderFix'>
-            <DropDownSort />
-            <Grid columns={2}>
+            <DropDownSort onClickSort={this.onClickSort} />
+            <Grid columns={2} centered>
               <Grid.Column width="6">
                 <GeneralChat chatType='general' />
               </Grid.Column>
               <Grid.Column width="10">
-                <Grid columns={4}>
-                  {wagerList.map(wager =>
-                    wager.complete ? null :
-                      (
-                        <Grid.Column width="4">
-                          <Card key={wager.address} className="ui segment centered">
-                            <Image src={basketball} />
-                            <Card.Header />
-                            <Link to={`/wagers/${wager.address}`} value={wager.address}>
-                              Click here to bet on
-                            <br />
-                              {wager.title}
-                            </Link>
-                            Ante: {wager.ante} Ether
-                          <br />
-                            Current Pot Size: {web3.utils.fromWei(wager.pot, 'ether')} Ether
-                        </Card>
-                        </Grid.Column>
-                      ))}
-                </Grid>
+                <RenderWagers wagerList={wagerList} columns={4} />
               </Grid.Column>
             </Grid>
           </div>

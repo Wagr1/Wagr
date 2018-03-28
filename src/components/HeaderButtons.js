@@ -16,14 +16,14 @@ const HeaderButtons = props => {
         <Header.Content>
           <Button className="primary button" circular onClick={props.createContract}>
             Create a new Contract
-                </Button>
+          </Button>
         </Header.Content>
       </Grid.Column>
       <Grid.Column>
         <Header.Content>
           <Button className="primary button" circular onClick={props.profilePage}>
             Profile Page
-                </Button>
+          </Button>
         </Header.Content>
       </Grid.Column>
     </Grid>

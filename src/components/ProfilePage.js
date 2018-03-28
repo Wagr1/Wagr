@@ -22,6 +22,7 @@ import Wager from "../ether/wagers";
 import web3 from "../ether/web3";
 import NavBar from './NavBar'
 import HomeButton from './HomeButton'
+import RenderWagers from "./RenderWagers";
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -50,10 +51,7 @@ class ProfilePage extends Component {
   }
 
   render() {
-    console.log("metamask: ", this.props.currentUser)
-    console.log("props: ", this.props.listOfWagers)
     const headerMessage = "Hello " + auth.currentUser.displayName
-
     const wagerList = this.props.listOfWagers;
 
     const managedWagers = wagerList.filter(wager => {
@@ -64,107 +62,46 @@ class ProfilePage extends Component {
       return wager.side1.concat(wager.side2).indexOf(this.state.metamask) > -1;
     });
 
-    console.log("managed: ", managedWagers);
     return (
       <div>
         <Segment inverted textAlign="center">
-        <NavBar message={headerMessage} />
-        <HomeButton goHome={this.goHome} />
+          <NavBar message={headerMessage} />
+          <HomeButton goHome={this.goHome} />
         </Segment>
-
 
         <Header as="h1" icon textAlign="center">
           <Icon name="hourglass half" circular />
           <Header.Content>Wager Status</Header.Content>
         </Header>
 
-
         <Grid columns={2}>
           <Grid.Column>
-          <Header as='h2' textAlign='centered'>Wagers you are currently managing:</Header>
-          <Grid columns={3}>
-              {managedWagers.length ? (
-                managedWagers.map(
-                  wager =>
-                    wager.complete ? null : (
-                      <Grid.Column>
-                        <Card
-                          key={wager.address}
-                          className="ui segment centered"
-                        >
-                          <Image src={basketball} />
-                          <Card.Header />
-                          <Link
-                            to={`/wagers/${wager.address}`}
-                            key={wager.address}
-                            value={wager.address}
-                          >
-                            Click here to bet on
-                            <br />
-                            {wager.title}
-                          </Link>
-                          Ante: {wager.ante} Ether
-                          <br />
-                          Current Pot Size:{" "}
-                          {web3.utils.fromWei(wager.pot, "ether")} Ether
-                        </Card>
-                      </Grid.Column>
-                    )
-                )
-              ) : (
+            <Header as='h2' textAlign='centered'>Wagers you are currently managing:</Header>
+            {managedWagers.length ? (
+              <RenderWagers wagerList={managedWagers} columns={3} />
+            ) : (
                 <div>
-                <Grid.Column />
-                <Grid.Column>
-                  <br />
-                  <br />
-                  <Header as='h3' textAlign='centered'>You are not currently managing any wagers.</Header>
+                  <Grid.Column />
+                  <Grid.Column>
+                    <br /><br />
+                    <Header as='h3' textAlign='centered'>You are not currently managing any wagers.</Header>
                   </Grid.Column>
-                  </div>
+                </div>
               )}
-            </Grid>
           </Grid.Column>
           <Grid.Column>
             <Header as='h2' textAlign='centered'>Wagers you are currently participating in:</Header>
-            <Grid columns={3}>
-              {inTheseWagers.length ? (
-                inTheseWagers.map(
-                  wager =>
-                    wager.complete ? null : (
-                      <Grid.Column>
-                        <Card
-                          key={wager.address}
-                          className="ui segment centered"
-                        >
-                          <Image src={basketball} />
-                          <Card.Header />
-                          <Link
-                            to={`/wagers/${wager.address}`}
-                            key={wager.address}
-                            value={wager.address}
-                          >
-                            Click here to bet on
-                            <br />
-                            {wager.title}
-                          </Link>
-                          Ante: {wager.ante} Ether
-                          <br />
-                          Current Pot Size:{" "}
-                          {web3.utils.fromWei(wager.pot, "ether")} Ether
-                        </Card>
-                      </Grid.Column>
-                    )
-                )
-              ) : (
+            {inTheseWagers.length ? (
+              <RenderWagers wagerList={inTheseWagers} columns={3} />
+            ) : (
                 <div>
-                <Grid.Column />
-                <Grid.Column>
-                  <br/>
-                  <br/>
-                  <Header as='h3' textAlign='centered'>You are not current participating in any wagers.</Header>
+                  <Grid.Column />
+                  <Grid.Column>
+                    <br /><br />
+                    <Header as='h3' textAlign='centered'>You are not current participating in any wagers.</Header>
                   </Grid.Column>
-                  </div>
+                </div>
               )}
-            </Grid>
           </Grid.Column>
         </Grid>
       </div>
@@ -172,7 +109,8 @@ class ProfilePage extends Component {
   }
 }
 
-const mapStateToProps = function(state, ownProps) {
+
+const mapStateToProps = function (state, ownProps) {
   return {
     currentUser: state.user,
     listOfWagers: state.wagers

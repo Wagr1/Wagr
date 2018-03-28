@@ -64,11 +64,6 @@ class SignUp extends Component {
   }
 }
 
-// const mapStateToProps = function(state, ownProps) {
-//   return {
-//     currentUser: state.user
-//   };
-// };
 
 const mapDispatchToProps = function (dispatch, ownProps) {
   return {
